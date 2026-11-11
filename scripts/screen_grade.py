@@ -97,7 +97,10 @@ def in_git_repo(path: pathlib.Path) -> bool:
                            capture_output=True, text=True, timeout=10)
         return r.returncode == 0 and r.stdout.strip() == "true"
     except (OSError, subprocess.TimeoutExpired):
-        return False
+        # git missing or stuck: fail closed by looking for a .git folder ourselves,
+        # so a resume is never written into a repo just because git isn't installed
+        start = path.parent.resolve()
+        return any((p / ".git").exists() for p in (start, *start.parents))
 
 
 def norm(s: str) -> str:

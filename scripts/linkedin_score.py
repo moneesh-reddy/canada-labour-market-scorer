@@ -149,7 +149,8 @@ def score(text: str, market: dict, record: dict | None = None, resume: str | Non
           "Write a headline: target role, stack, one differentiator."),
         C("Headline", "Headline names your target role" + (f" ({role})" if role else ""),
           bool(role_words) and role_words <= head_words, head[:100], 3,
-          f"Lead the headline with your target role in the posting's words: \"{role or 'Software Engineer'}\"."),
+          (f"Lead the headline with your target role in the posting's words: \"{role}\"." if role
+           else "Set target_role in portfolio.json, then lead the headline with that role in the posting's words.")),
         C("Headline", "Headline names 2+ lane skills", len(head_sk) >= 2, ", ".join(sorted(head_sk)), 2,
           "Add your two strongest proven lane skills to the headline."),
     ]

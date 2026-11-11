@@ -781,10 +781,23 @@ class TestResumeScoreRules(unittest.TestCase):
             with mock.patch.object(rs.onet_mod, "Onet", side_effect=AssertionError("pulled before checking input")):
                 self.assertEqual(rs.main(base + ["--github", str(pathlib.Path(d) / "missing.json")]), 2)
                 self.assertEqual(rs.main(base + ["--postings", str(pathlib.Path(d) / "nodir")]), 2)
-                self.assertEqual(rs.main(base + ["--md", str(ROOT / "leak.md")]), 2)  # the report quotes the resume
+                repo = pathlib.Path(d) / "repo"
+                repo.mkdir()  # a throwaway repo, so the test passes outside a git checkout
+                subprocess.run(["git", "init", "-q", str(repo)], check=True)
+                self.assertEqual(rs.main(base + ["--md", str(repo / "leak.md")]), 2)  # the report quotes the resume
                 with self.assertRaises(SystemExit):
                     rs.main(base + ["--need", "0"])
-        self.assertFalse((ROOT / "leak.md").exists())
+                self.assertFalse((repo / "leak.md").exists())
+
+    def test_git_guard_fails_closed_without_git(self):
+        import screen_grade as sg
+        with tempfile.TemporaryDirectory() as d:
+            repo = pathlib.Path(d) / "repo"
+            (repo / ".git").mkdir(parents=True)
+            (repo / "sub").mkdir()
+            with mock.patch.object(sg.subprocess, "run", side_effect=FileNotFoundError("git")):
+                self.assertTrue(sg.in_git_repo(repo / "sub" / "resume.txt"))
+                self.assertFalse(sg.in_git_repo(pathlib.Path(d) / "resume.txt"))
 
     def test_every_surface_score_carries_the_calibration(self):
         import github_score
