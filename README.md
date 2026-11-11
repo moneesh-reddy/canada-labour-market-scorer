@@ -1,4 +1,6 @@
-# AI-Era Job Kit
+# AI-Era Job Kit, with Canadian labour-market data
+
+> **About this fork.** It adds live Canadian outlook and pay data (Job Bank, NOC 2021) alongside the kit's US sources, plus three fixes found by running the kit end to end. What changed and why: [`FORK.md`](FORK.md). Original kit: [Vets-Who-Code/ai-era-job-kit](https://github.com/Vets-Who-Code/ai-era-job-kit).
 
 **Bottom line:** a free, portfolio-first toolkit for getting a software engineering job in the AI era. Your portfolio is the base; your resume, LinkedIn and GitHub are scored against the market and rebuilt from it. One scoring chain of 7 skills, 7 agents that use those skills, 4 commands and 12 no-dependency Python scripts. All market data is public, keyless and pulled live on every run. Every number behind a "why" names its source: see `METHOD.md`.
 
@@ -158,9 +160,24 @@ Run these from your work folder (`~/job-search` above), with `scripts/` standing
 | O*NET OnLine | Look up occupation codes | https://www.onetonline.org/find/ |
 | BLS Employment Projections | 10-year growth, annual openings, median wage | https://www.bls.gov/emp/tables/occupational-projections-and-characteristics.htm |
 | BLS Public Data API v1 | OEWS wages, no registration (small daily quota) | https://www.bls.gov/developers/ |
+| Job Bank 3-year employment outlooks (ESDC, Canada) | Outlook by NOC 2021 occupation, province and economic region | https://open.canada.ca/data/en/dataset/b0e112e9-cf53-4e79-8838-23cd98debe5b |
+| Job Bank wages (ESDC, Canada) | Low, median and high wage by NOC, province and region | https://open.canada.ca/data/en/dataset/adad580f-76b0-4502-bd05-20c125de9116 |
 | Your saved postings, or public Greenhouse, Lever and Ashby boards | What employers ask for right now, including tools O*NET hasn't added | |
 
 **Live-data rule:** the scorers and market tools stop with `STOPPED:` if O*NET or BLS can't be reached. They never fall back to remembered numbers. Steps 2 to 4 reuse the skill list step 1 saved in `resume-score.json`, so every surface is scored against one target; rerun step 1 to refresh it.
+
+## In Canada
+
+O*NET and BLS are US sources. For a Canadian job search, keep O*NET for the skill list (Canada has no keyless equivalent with demand flags) and take the outlook and pay from Job Bank by NOC 2021 code:
+
+```
+python3 $KIT/scripts/canada_outlook.py --find "information systems"            # find NOC codes
+python3 $KIT/scripts/canada_outlook.py --noc 20012 21223 --province ON --region Toronto --md outlook.md
+python3 $KIT/scripts/resume_score.py --resume my-resume.pdf --onet 11-3021.00 \
+    --noc 20012 --province ON --region Toronto --json resume-score.json
+```
+
+With `--noc`, the resume report shows Job Bank's outlook (Very good to Very limited, for the current 3-year period) and median wage in place of the BLS line. The newest release is found through the Open Government API on every run, and the same live-data rule applies: no pull, no number. Needs `open.canada.ca` and `opencanada.blob.core.windows.net` reachable.
 
 ## You are the product
 

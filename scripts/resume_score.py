@@ -6,6 +6,8 @@ Every rule here traces to references/ats-research.md.
 
   python3 resume_score.py --resume resume.pdf --onet 15-1252.00 [--postings ./postings] \\
       [--boards greenhouse:stripe ...] [--json resume-score.json] [--md resume-score.md]
+  In Canada, add the NOC code so the outlook and pay come from Job Bank, not BLS:
+  python3 resume_score.py --resume resume.pdf --onet 11-3021.00 --noc 20012 --province ON --region Toronto
 
 What it does, in the ATS's own order:
   1. Parse gate. Extract the text; if it can't be read (too few words, no standard headings, no dates,
@@ -13,7 +15,8 @@ What it does, in the ATS's own order:
      fix on the report, not a block: the file still parses.
      [vendor: HiredScore gives no grade to unreadable files; parse-breakers from Jerome's Feb 3 and Feb 4 chats]
   2. Pull the lane live: O*NET Technology Skills for the occupation, plus your saved postings or public
-     boards if you give them, and the BLS 10-year outlook. If a pull fails, it stops. It never guesses.
+     boards if you give them, and the BLS 10-year outlook (or, with --noc, Job Bank's Canadian outlook
+     and pay). If a pull fails, it stops. It never guesses.
   3. Grade each in-demand skill on its evidence across the resume, GitHub and LinkedIn:
        proven 1.0  named in an Experience or Projects line that has a number, AND the same skill shows in
                    recent public work: a pinned repo pushed in the last year (step 3), or LinkedIn
@@ -56,6 +59,7 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 from jobdata import bls as bls_mod  # noqa: E402
+from jobdata import canada as ca_mod  # noqa: E402
 from jobdata import calibration as cal  # noqa: E402
 from jobdata import demand as dm  # noqa: E402
 from jobdata import docs, lexicon  # noqa: E402
@@ -273,7 +277,9 @@ def report_md(r: dict) -> str:
     if r.get("need"):
         L += [f"The score counts your best {min(r['need'], len(r['skills']))} of the lane's {len(r['skills'])} in-demand skills, "
               f"weighted by demand (--need). From the resume alone, before outside proof: {r.get('text_score')} / 100.", ""]
-    if o:
+    if r.get("outlook_ca"):
+        L += [ca_mod.summary_line(r["outlook_ca"], r.get("wages_ca") or {}), ""]
+    elif o:
         L += [f"BLS outlook (live): {o.get('growth_pct_10yr')}% 10-year growth, {o.get('annual_openings_thousands')}k openings a year.", ""]
     if not r.get("corroborated"):
         L += ["No GitHub or LinkedIn evidence given, so no skill is proven yet. Proven needs the resume bullet with a number",
@@ -304,6 +310,9 @@ def main(argv=None) -> int:
     ap.add_argument("--need", type=int, default=NEED, help=f"how many lane skills the score asks you to prove (default {NEED})")
     ap.add_argument("--github", help="github-score.json from step 3: skills shown in recent pinned repos")
     ap.add_argument("--linkedin", help="linkedin-score.json from step 2: skills shown in Experience, Projects, Featured")
+    ap.add_argument("--noc", help="Canada: NOC 2021 code for the outlook and pay line (Job Bank) in place of BLS, e.g. 20012")
+    ap.add_argument("--province", default="ON", help="Canada: two-letter province for --noc (default ON)")
+    ap.add_argument("--region", help="Canada: economic region for --noc, e.g. Toronto")
     ap.add_argument("--json")
     ap.add_argument("--md")
     a = ap.parse_args(argv)
@@ -335,9 +344,17 @@ def main(argv=None) -> int:
         posts, warn = post_mod.gather(a.postings, a.boards, a.role_filter)
         r = score(text, rows, posts, top=a.top, outside=outside, need=a.need)
         r.update(onet_code=code, title=on.title(code), onet_release=on.version, warnings=warn)
-        o = bls_mod.Bls().projections(code)
-        r["outlook"] = {"growth_pct_10yr": o.get("growth_pct_10yr"),
-                        "annual_openings_thousands": o.get("annual_openings_thousands"), "source": o.get("source")}
+        if a.noc:
+            jb = ca_mod.JobBank()
+            r["outlook_ca"] = jb.outlook(a.noc, a.province, a.region)
+            r["wages_ca"] = jb.wages(a.noc, a.province, a.region)
+        else:
+            o = bls_mod.Bls().projections(code)
+            r["outlook"] = {"growth_pct_10yr": o.get("growth_pct_10yr"),
+                            "annual_openings_thousands": o.get("annual_openings_thousands"), "source": o.get("source")}
+    except ValueError as e:
+        print(f"REFUSED: {e}", file=sys.stderr)
+        return 2
     except FetchError as e:
         print(f"STOPPED: {e}", file=sys.stderr)
         return 3

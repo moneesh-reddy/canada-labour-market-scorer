@@ -7,6 +7,8 @@ Sources (all public, no API key):
   * BLS Employment Projections table (bls.gov/emp) - 10-year growth,
     annual openings, median wage.
   * BLS Public Data API v1 (api.bls.gov) - OEWS wages, no registration.
+  * Job Bank (ESDC, via open.canada.ca) - Canadian 3-year outlooks and wages
+    by NOC 2021 code, province and economic region (canada.py).
   * Job postings - your own saved postings, or public Greenhouse / Lever /
     Ashby job boards for companies you name.
 
