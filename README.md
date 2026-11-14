@@ -179,6 +179,10 @@ python3 $KIT/scripts/resume_score.py --resume my-resume.pdf --onet 11-3021.00 \
 
 With `--noc`, the resume report shows Job Bank's outlook (Very good to Very limited, for the current 3-year period) and median wage in place of the BLS line. The newest release is found through the Open Government API on every run, and the same live-data rule applies: no pull, no number. Needs `open.canada.ca` and `opencanada.blob.core.windows.net` reachable.
 
+## Daily job alerts (LinkedIn and Indeed)
+
+`scripts/job_alerts.py` turns the job-alert emails you already get from LinkedIn and Indeed into one filtered, ranked list: same job on both sites merged, already-seen jobs dropped, your pay, office-day, location and title filters applied. It reads saved `.eml` or `.mbox` files from your own computer and makes no network calls. Setup and the daily routine: `JOB-ALERTS.md`. Filters template: `templates/job-alert-filters.json`.
+
 ## You are the product
 
 You move through an AI-powered ATS, then a hiring manager, then the dev team over multiple rounds of interviews. `METHOD.md` lists what each stage does, how it scores (with sources) and which tool here rehearses it.
@@ -201,7 +205,7 @@ How the ATS works, claim by claim with sources: `references/ats-research.md`. Ne
 ```
 python3 -m unittest discover -s tests -v
 ```
-Offline tests with synthetic fixtures cover parsing, demand ranking, every step of the scoring chain (GitHub is stubbed), both O*NET layouts, the skill matcher's false positives, the screen grade (quote check, letters, parse gate, grader agreement, git refusal), the live-data stop, the funnel tracker and Friday Setup redaction.
+Offline tests with synthetic fixtures cover parsing, demand ranking, every step of the scoring chain (GitHub is stubbed), both O*NET layouts, the skill matcher's false positives, the screen grade (quote check, letters, parse gate, grader agreement, git refusal), the live-data stop, the funnel tracker, the job-alert email parser and Friday Setup redaction.
 
 ## Edit the skill vocabulary
 

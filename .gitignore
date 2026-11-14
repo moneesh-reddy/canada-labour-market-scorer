@@ -29,6 +29,15 @@ linkedin*.txt
 linkedin*.pdf
 Profile.pdf
 
+# Job alerts: real emails, your filters, seen list and reports
+*.eml
+*.mbox
+job-alert-filters.json
+alerts-seen*.csv
+alerts-*.md
+alerts-*.csv
+alerts-*.json
+
 # The kit's own templates and test fixtures are not personal data
 !templates/**
 !tests/fixtures/**
