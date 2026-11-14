@@ -1,0 +1,20 @@
+{
+  "_help": "Copy this file OUTSIDE any git repository (for example ~/job-search/job-alert-filters.json) and fill in your own values. null turns a filter off. Pay is yearly in the alert's currency; hourly pay is converted at 1,950 hours. Keys that start with _ are ignored.",
+  "_pay": "pay_floor: skip a job when the TOP of its stated pay range is below this. keep_unknown_pay: keep jobs whose alert states no pay (flagged in the report).",
+  "pay_floor": null,
+  "keep_unknown_pay": true,
+  "_office": "max_office_days: most office days a week you accept. high_pay_threshold + high_pay_max_office_days: accept more office days when the top of the pay range reaches the threshold. keep_unknown_office_days: keep jobs that don't say (flagged).",
+  "max_office_days": null,
+  "high_pay_threshold": null,
+  "high_pay_max_office_days": null,
+  "keep_unknown_office_days": true,
+  "_location": "preferred_locations: ranked best first; jobs are sorted by it (use \"remote\" to rank remote jobs). allowed_locations: if set, skip jobs elsewhere. remote_ok: keep remote jobs even when not in allowed_locations.",
+  "preferred_locations": ["Your City", "remote"],
+  "allowed_locations": null,
+  "remote_ok": true,
+  "_titles": "Whole-word matches, case-insensitive, as lists of words or phrases, e.g. [\"word one\", \"word two\"].",
+  "include_title_words": null,
+  "exclude_title_words": null,
+  "exclude_companies": [],
+  "exclude_contract": false
+}

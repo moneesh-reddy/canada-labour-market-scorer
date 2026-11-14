@@ -23,6 +23,24 @@ Design choices:
 
 Known limits: the NOC search matches title words only (for example "information systems", not "BI"). Job Bank has no national outlook row, so a province is required. Skills remain US-sourced (O*NET).
 
+## Daily job alerts from LinkedIn and Indeed emails
+
+The kit's journey had no step for the jobs that arrive every day. This fork adds one that works from the alert emails both sites already send.
+
+| Piece | What it does |
+|---|---|
+| `scripts/job_alerts.py` | Reads LinkedIn and Indeed alert emails from saved `.eml` files, folders or `.mbox` exports. Pulls title, company, location, pay and office days for each job, merges the same job across both sites, drops jobs listed in a seen file, applies filters and writes a ranked Markdown, CSV or JSON report. |
+| `templates/job-alert-filters.json` | Filters template: pay floor, office-day limit with a high-pay exception, preferred and allowed locations, title words, companies, contracts. Every filter is off until set. |
+| `JOB-ALERTS.md` | Setting up the alerts, the daily run, and how it feeds the Screen Grade and funnel tracker. |
+| `tests/test_job_alerts.py` | 23 offline tests on synthetic fixtures (`tests/fixtures/alerts/`). |
+
+Design choices:
+
+- **Email only, no scraping.** It never logs in to or fetches LinkedIn or Indeed pages, whose terms forbid automated access. Alert emails are messages sent to the user, read from the user's own files. No network calls.
+- **Links as anchors.** Alert HTML changes often, so the parser finds job links (`/jobs/view/<id>`, `jk=<id>`), strips tracking parameters, and reads the few lines after each link. Footers and non-job links are ignored. A plain-text fallback covers text-only alerts.
+- **No guessing.** Pay and office days come only from the alert. Missing values are reported as "not stated", and the filters decide whether to keep or drop them.
+- **Same privacy rule as the rest of the kit.** Reports, the seen file and filters describe a job search, so the tool refuses to write them inside a git repository.
+
 ## Fixes
 
 | Change | Why | Proof |
@@ -37,4 +55,4 @@ Known limits: the NOC search matches title words only (for example "information 
 python3 -m unittest discover -s tests -v
 ```
 
-86 tests, all offline.
+109 tests, all offline.

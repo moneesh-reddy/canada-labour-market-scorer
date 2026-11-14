@@ -1,8 +1,8 @@
 # AI-Era Job Kit, with Canadian labour-market data
 
-> **About this fork.** It adds live Canadian outlook and pay data (Job Bank, NOC 2021) alongside the kit's US sources, plus three fixes found by running the kit end to end. What changed and why: [`FORK.md`](FORK.md). Original kit: [Vets-Who-Code/ai-era-job-kit](https://github.com/Vets-Who-Code/ai-era-job-kit).
+> **About this fork.** It adds live Canadian outlook and pay data (Job Bank, NOC 2021) alongside the kit's US sources, a [daily job-alert review](#daily-job-alerts-linkedin-and-indeed) for LinkedIn and Indeed alert emails, and three fixes found by running the kit end to end. What changed and why: [`FORK.md`](FORK.md). Original kit: [Vets-Who-Code/ai-era-job-kit](https://github.com/Vets-Who-Code/ai-era-job-kit).
 
-**Bottom line:** a free, portfolio-first toolkit for getting a software engineering job in the AI era. Your portfolio is the base; your resume, LinkedIn and GitHub are scored against the market and rebuilt from it. One scoring chain of 7 skills, 7 agents that use those skills, 4 commands and 12 no-dependency Python scripts. All market data is public, keyless and pulled live on every run. Every number behind a "why" names its source: see `METHOD.md`.
+**Bottom line:** a free, portfolio-first toolkit for getting a software engineering job in the AI era. Your portfolio is the base; your resume, LinkedIn and GitHub are scored against the market and rebuilt from it. One scoring chain of 7 skills, 7 agents that use those skills, 4 commands and 14 no-dependency Python scripts. All market data is public, keyless and pulled live on every run. Every number behind a "why" names its source: see `METHOD.md`.
 
 **The Three Laws:**
 1. Measure everything.
@@ -151,6 +151,7 @@ Run these from your work folder (`~/job-search` above), with `scripts/` standing
 8. Step 6, plan: `python3 scripts/scorecard.py plan --composite composite.json --md plan.md`
 9. Step 7, rebuild: `python3 scripts/resume_rebuild.py --portfolio portfolio.json --brag ~/code/portfolio/brag/entries --market resume-score.json --out ~/resumes/me-backend-resume.txt`, then `--check` the finished PDF.
 10. Track every application: `python3 scripts/funnel.py init --file ~/job-search/funnel.csv`
+11. Every day, review new jobs from your LinkedIn and Indeed alert emails: `python3 scripts/job_alerts.py inbox/ --filters job-alert-filters.json --seen alerts-seen.csv --update-seen --md alerts-today.md` (setup below and in [`JOB-ALERTS.md`](JOB-ALERTS.md))
 
 ## Data sources (all public, no API key)
 
@@ -179,6 +180,33 @@ python3 $KIT/scripts/resume_score.py --resume my-resume.pdf --onet 11-3021.00 \
 
 With `--noc`, the resume report shows Job Bank's outlook (Very good to Very limited, for the current 3-year period) and median wage in place of the BLS line. The newest release is found through the Open Government API on every run, and the same live-data rule applies: no pull, no number. Needs `open.canada.ca` and `opencanada.blob.core.windows.net` reachable.
 
+## Daily job alerts (LinkedIn and Indeed)
+
+`scripts/job_alerts.py` turns the job-alert emails you already get from LinkedIn and Indeed into one filtered, ranked list: the same job on both sites merged, jobs you've already seen dropped, and your pay, office-day, location and title filters applied. It reads saved `.eml` or `.mbox` files from your own computer. It never logs in to or opens LinkedIn or Indeed pages, and it makes no network calls.
+
+**Set up once**
+
+1. Create daily email alerts for your searches on LinkedIn (Jobs, search, "Set alert") and Indeed ("Get new jobs for this search by email").
+2. Make a work folder outside any git repository, with a folder for the day's emails: `mkdir -p ~/job-search/inbox`
+3. Copy the filters template and fill in your own values. Every filter is off (`null`) until you set it:
+   `cp $KIT/templates/job-alert-filters.json ~/job-search/job-alert-filters.json`
+
+**Every day**
+
+1. Save the day's alert emails as `.eml` files into `~/job-search/inbox/`, or export them as one `.mbox` file.
+2. Run the review:
+
+   ```
+   cd ~/job-search
+   python3 $KIT/scripts/job_alerts.py inbox/ --filters job-alert-filters.json \
+       --seen alerts-seen.csv --update-seen --md alerts-$(date +%F).md --csv alerts-$(date +%F).csv
+   ```
+
+3. Open the report. Kept jobs are ranked by your preferred locations, then pay; skipped jobs are listed with the reason. For each job you'll pursue, run the Screen Grade against the posting and log it with `funnel.py add`.
+4. Empty `inbox/`. Tomorrow's run shows only new jobs, because `--update-seen` records today's.
+
+The full guide, with every filter explained and what to do when a field comes out blank: [`JOB-ALERTS.md`](JOB-ALERTS.md).
+
 ## You are the product
 
 You move through an AI-powered ATS, then a hiring manager, then the dev team over multiple rounds of interviews. `METHOD.md` lists what each stage does, how it scores (with sources) and which tool here rehearses it.
@@ -192,7 +220,7 @@ How the ATS works, claim by claim with sources: `references/ats-research.md`. Ne
 
 ## Privacy
 
-- Keep resumes and `funnel.csv` outside any git repository. The Brag Database lives in your portfolio repo: raw pulls stay in the git-ignored `brag/inbox/`, and only entries you curate and promote reach `brag/entries/`.
+- Keep resumes, `funnel.csv` and the job-alert files (filters, `alerts-seen.csv`, reports, saved emails) outside any git repository; `job_alerts.py` refuses to write inside one. The Brag Database lives in your portfolio repo: raw pulls stay in the git-ignored `brag/inbox/`, and only entries you curate and promote reach `brag/entries/`.
 - Nothing in this kit sends, posts or applies for you. Every message is a draft you send yourself.
 - `friday_setup.py` redacts tokens, keys, emails, IPs and internal hostnames, and hides private repo names unless you pass `--show-private`.
 
@@ -201,7 +229,7 @@ How the ATS works, claim by claim with sources: `references/ats-research.md`. Ne
 ```
 python3 -m unittest discover -s tests -v
 ```
-Offline tests with synthetic fixtures cover parsing, demand ranking, every step of the scoring chain (GitHub is stubbed), both O*NET layouts, the skill matcher's false positives, the screen grade (quote check, letters, parse gate, grader agreement, git refusal), the live-data stop, the funnel tracker and Friday Setup redaction.
+Offline tests with synthetic fixtures cover parsing, demand ranking, every step of the scoring chain (GitHub is stubbed), both O*NET layouts, the skill matcher's false positives, the screen grade (quote check, letters, parse gate, grader agreement, git refusal), the live-data stop, the funnel tracker, the job-alert email parser and Friday Setup redaction.
 
 ## Edit the skill vocabulary
 

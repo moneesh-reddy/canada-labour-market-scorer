@@ -1,0 +1,34 @@
+From: Indeed <alert@indeed.com>
+To: job.seeker@example.com
+Subject: New jobs for your saved search
+Date: Fri, 13 Nov 2026 07:05:00 -0500
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<html><body>
+<!-- Synthetic test fixture: every company, job and link here is made up. -->
+<table>
+<tr><td>
+  <a href="https://ca.indeed.com/rc/clk?jk=00000000000000a1&amp;from=ja&amp;tk=SYNTH">Manager, Data Analytics</a>
+  <div>Northwind Data Ltd</div>
+  <div>Ottawa, ON</div>
+  <div>$95,000 - $115,000 a year</div>
+  <div>Hybrid work</div>
+</td></tr>
+<tr><td>
+  <a href="https://ca.indeed.com/rc/clk?jk=00000000000000a2&amp;from=ja">Reporting Analyst (Contract)</a>
+  <div>Tailspin Services</div>
+  <div>Halifax, NS</div>
+  <div>$48 - $55 an hour</div>
+  <div>Hybrid, 3 days in office</div>
+</td></tr>
+<tr><td>
+  <a href="https://ca.indeed.com/pagead/clk?jk=00000000000000a3&amp;from=ja">Head of Analytics</a>
+  <div>Wingtip Logistics</div>
+  <div>Winnipeg, MB</div>
+  <div>On-site</div>
+  <div>Just posted</div>
+</td></tr>
+</table>
+<p><a href="https://ca.indeed.com/alerts">Manage your job alerts</a> | Unsubscribe</p>
+</body></html>

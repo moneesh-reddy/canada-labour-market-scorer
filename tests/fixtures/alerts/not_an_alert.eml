@@ -1,0 +1,7 @@
+From: Newsletter <news@example.com>
+To: job.seeker@example.com
+Subject: Weekly reading
+MIME-Version: 1.0
+Content-Type: text/html; charset="utf-8"
+
+<html><body><a href="https://www.linkedin.com/jobs/view/1000000009/">Some job</a><p>Example Org</p></body></html>

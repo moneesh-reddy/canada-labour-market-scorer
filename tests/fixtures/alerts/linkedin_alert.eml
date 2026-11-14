@@ -1,0 +1,43 @@
+From: LinkedIn Job Alerts <alerts@linkedin.com>
+To: job.seeker@example.com
+Subject: New jobs for your saved search
+Date: Fri, 13 Nov 2026 07:00:00 -0500
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="SYNTH"
+
+--SYNTH
+Content-Type: text/plain; charset="utf-8"
+
+Synthetic test fixture. Plain part intentionally short.
+
+--SYNTH
+Content-Type: text/html; charset="utf-8"
+
+<html><head><style>.x{color:red}</style></head><body>
+<!-- Synthetic test fixture: every company, job and link here is made up. -->
+<table>
+<tr><td>
+  <a href="https://www.linkedin.com/comm/jobs/view/1000000001/?trackingId=abc&amp;refId=xyz"><img alt="Northwind Data Ltd logo" src="https://example.com/logo1.png"></a>
+  <a href="https://www.linkedin.com/comm/jobs/view/1000000001/?trackingId=abc&amp;refId=xyz">Manager, Data Analytics</a>
+  <p>Northwind Data Ltd &middot; Ottawa, ON (Hybrid)</p>
+  <p>$95K - $115K/yr</p>
+  <p>2 days in office</p>
+  <p>Actively recruiting</p>
+</td></tr>
+<tr><td>
+  <a href="https://www.linkedin.com/comm/jobs/view/1000000002/?trackingId=def">Analytics Team Lead</a>
+  <p>Contoso Retail &middot; Calgary, AB (On-site)</p>
+  <p>$70K - $80K/yr</p>
+  <p>Easy Apply</p>
+</td></tr>
+<tr><td>
+  <a href="https://www.linkedin.com/comm/jobs/view/1000000003/">Senior Manager, Business Intelligence</a>
+  <p>Fabrikam Insurance &middot; Canada (Remote)</p>
+</td></tr>
+</table>
+<p><a href="https://www.linkedin.com/comm/jobs/search/">See all jobs</a></p>
+<p>You are receiving job alert emails. <a href="https://www.linkedin.com/comm/psettings/">Unsubscribe</a></p>
+<p>&copy; Synthetic footer, Example City</p>
+</body></html>
+
+--SYNTH--
